@@ -1,0 +1,44 @@
+<aside id="game_zone" hidden>
+    <section class="header">
+        <div id="page_selector" hidden>
+            <form id="page_form">
+                <div class="flex-row">
+                    <div class="start">
+                        <small>Start</small><br/>
+                        <page-choice name="start_page" options='{ "placeholderValue": "Start Page", "searchPlaceholderValue": "Search and select a start page" }' required/>
+                    </div>
+                    <strong class="spacer">⇒</strong>
+                    <div class="target">
+                        <small>Target</small><br/>
+                        <page-choice name="end_page" options='{ "placeholderValue": "Target Page", "searchPlaceholderValue": "Search and select an end page" }' required/>
+                    </div>
+                </div>
+                <input class="btn btn-primary" type="submit"/>
+            </form>
+        </div>
+        <div id="pages_selecting" hidden>
+            <strong class="chooser"></strong> is choosing the pages.
+        </div>
+        <div id="pages_selected" hidden>
+            <div class="flex-row">
+                <div class="start">
+                    <small>Start</small><br/>
+                    <div id="start_page"></div>
+                </div>
+                <div class="spacer">
+                    <p><strong>⇒</strong></p>
+                    <p><strong id="clock">0</strong></p>
+                </div>
+                <div class="target">
+                    <small>Target</small><br/>
+                    <div id="end_page"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="scores_round" hidden>
+        <h2>Results of the round</h2>
+        <div class="players-scores"></div>
+    </section>
+    <wiki-page id="current_page"></wiki-page>
+</aside>

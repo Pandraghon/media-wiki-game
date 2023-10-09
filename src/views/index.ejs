@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head', { wikis }); %>
+</head>
+<body>
+    <main>
+        <div class="main-content">
+            <section id="presentation">
+                <h1>MediaWiki Game</h1>
+                <p>In the WikiGame, you start from a page from a wiki, and you have to reach another page, using only interlinks present in the current page.</p>
+            </section>
+            <%- include('partials/landing', { roomID }) %>
+            <%- include('partials/settings', { roomID }) %>
+        </div>
+    </main>
+    <%- include('partials/gameZone') %>
+    <%- include('partials/gameEnd') %>
+</body>
+</html>

@@ -1,0 +1,4 @@
+INSERT INTO game.wiki (wikiid, sitename, mainpage, server, articlepath, scriptpath, logo, favicon, lang) VALUES
+	('enwiki', 'Wikipedia', 'Main Page', '//en.wikipedia.org', '/wiki/$1', '/w', '//en.wikipedia.org/static/images/project-logos/enwiki.png', '//en.wikipedia.org/static/favicon/wikipedia.ico', 'en'),
+	('frwiki', 'Wikipédia', 'Wikipédia:Accueil principal', '//fr.wikipedia.org', '/wiki/$1', '/w', '//fr.wikipedia.org/static/images/project-logos/frwiki.png', '//fr.wikipedia.org/static/favicon/wikipedia.ico', 'fr'),
+	('fr_wikidb_gw2', 'Guild Wars 2 Wiki', 'Accueil', '//wiki-fr.guildwars2.com', '/wiki/$1', '', '//wiki-fr.guildwars2.com/images/f/f8/Logo_GW2_blanc.png', '//wiki-fr.guildwars2.com/favicon.ico', 'fr');

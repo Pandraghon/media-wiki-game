@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head'); %>
+</head>
+<body>
+    <main>
+		<h1>Room <%= roomId %></h1>
+		<% if (isAdmin) { %>
+		<section>
+			<h2>Room Configuration</h2>
+			<form action="create">
+				<label for="wikiid">Find an existing Wiki site</label><br/>
+				<select name="wikiid" id="wikiid">
+				<% wikis.forEach(w => { %>
+					<option value="<%= w.wikiid %>" <% if (query.wikiid == w.wikiid) {%>selected<% } %>><%= w.sitename %> (<%= w.lang %>)</option>
+				<% }) %>
+				</select>
+				<input type="submit">
+			</form>
+			<form action="/add" method="post">
+				<label for="new-wiki">Or add a new one</label><br/>
+				<input type="text" name="new-wiki" placeholder="https://en.wikipedia.org/wiki/Main_Page"/>
+				<input type="submit"/>
+			</form>
+		</section>
+		<% } %>
+		<section>
+			<h2>Players</h2>
+			<form action="/join">
+				<input type="hidden" value="<%= roomId %>" name="room-id"/>
+				<input type="text" name="username" placeholder="Username" autocomplete="nickname"/>
+				<input type="hidden" name="token"/>
+				<input type="submit" value="Join"/>
+			</form>
+		</section>
+	</main>
+</body>
+</html>

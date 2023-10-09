@@ -1,0 +1,30 @@
+{
+	"name": "mediawiki.game",
+	"version": "1.0.0",
+	"description": "WikiGame for MediaWikis",
+	"type": "module",
+	"main": "server.js",
+	"scripts": {
+		"start": "npm i && node ./bin/www.js",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [
+	  "wiki",
+	  "wikigame"
+	],
+	"author": "Pandraghon <pandraghon@outlook.com>",
+	"license": "MIT",
+	"dependencies": {
+		"express": "^4.17.2",
+		"express-session": "^1.17.2",
+		"ejs": "^3.1.6",
+		"redis": "^4.0.1",
+		"pg": "^8.7.1",
+		"connect-pg-simple": "^7.0.0",
+		"dotenv": "^10.0.0",
+		"node-fetch": "^3.1.0",
+		"body-parser": "^1.19.1",
+		"socket.io": "^4.4.1"
+	}
+  }
+  

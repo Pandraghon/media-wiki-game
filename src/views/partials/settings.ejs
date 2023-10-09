@@ -1,0 +1,57 @@
+<section id="settings" hidden>
+    <div>
+        <div>
+            <h2>Invite your friends!</h2>
+            <div>
+                <input class="input input-inline" type="text" id="gameLink" value="http://localhost:3000/" readonly />
+                <button class="btn" type="button" id="copy">Copy Link</button>
+            </div>
+        </div>
+        <div>
+            <h2>Settings</h2>
+            <div>
+                <label for="rounds">Rounds</label>
+                <select id="rounds">
+                    <option value="1">1</option>
+                    <option value="2" selected>2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+            </div>
+            <div>
+                <label for="time">Search time in seconds</label>
+                <select id="time">
+                    <option value="15">15</option>
+                    <option value="30">30</option>
+                    <option value="60" selected>60</option>
+                    <option value="120">120</option>
+                    <option value="180">180</option>
+                    <option value="240">240</option>
+                    <option value="300">300</option>
+                    <option value="360">360</option>
+                </select>
+            </div>
+            <div>
+                <label for="wiki">Select Wiki</label>
+                <select id="wiki">
+                    <!-- filled with JS -->
+                </select>
+            </div>
+            <% if(!roomID) { %>
+            <!-- Only for room owner -->
+            <% } %>
+            <button class="btn btn-primary w-100" id="startGame">Start Game</button>
+        </div>
+        
+    </div>
+</section>
+<section id="players" hidden>
+    <h2>Players</h2>
+    <div id="playersDiv"></div>
+</section>
