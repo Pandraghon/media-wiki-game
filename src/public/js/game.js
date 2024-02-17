@@ -4,7 +4,7 @@ let pickWordID = 0;
 let hints = [];
 let currentWiki = false;
 
-function createPlayerCard(players) {
+function createPlayerCard(players, wikiid) {
     players.forEach((player) => {
         /*const playerCard = new PlayerCard();
         playerCard.id = `player-${player.id}`;
@@ -14,6 +14,7 @@ function createPlayerCard(players) {
         const playerScore = new PlayerScore();
         playerScore.id = `player-score-${player.id}`;
         playerScore.setAttribute('name', player.name);
+        playerScore.setAttribute('wikiid', wikiid);
         document.querySelector('.players-scores').append(playerScore);
     });
 }
@@ -35,11 +36,14 @@ function startTimer(ms) {
     document.querySelectorAll('.players .correct').forEach((player) => player.classList.remove('correct'));
 }
 
-socket.on('getPlayers', (players) => createPlayerCard(players));
+socket.on('getPlayers', ({players, wikiid}) => createPlayerCard(players, wikiid));
 socket.on('updateSteps', ({ playerID, steps, won }) => {
     document.querySelector(`#player-${playerID}`).steps = steps.length;
     document.querySelector(`#player-${playerID}`).classList.toggle('finished', won);
     document.querySelector(`#player-score-${playerID}`).steps = steps;
+    if (playerID === socket.id) {
+        document.querySelector('#current_historic').setAttribute('steps', JSON.stringify(steps));
+    }
 });
 socket.on('updateScores', (players) => createPlayerCard(players));
 socket.on('updateScore', ({
@@ -52,16 +56,19 @@ socket.on('updateScore', ({
     document.querySelector(`#player-${chooserID}>div p:last-child`).textContent = `Score: ${chooserScore}`;
 });
 
-socket.on('choosing', ({ name }) => {
+socket.on('choosing', ({ name, turn }) => {
     document.getElementById('pages_selected').hidden = true;
     document.getElementById('current_page').hidden = true;
-    document.getElementById('scores_round').hidden = false;
+    if (turn != 1) {
+        document.getElementById('scores_round').hidden = false;
+    }
     const pagesSelecting = document.getElementById('pages_selecting');
     pagesSelecting.hidden = false;
     pagesSelecting.querySelector('.chooser').textContent = name;
     document.querySelector('#clock').textContent = 0;
     clearInterval(timerID);
     //clock.stop();
+    window.scrollTo(0, 0);
 });
 
 socket.on('settingsUpdate', (data) => {
@@ -72,7 +79,7 @@ socket.on('settingsUpdate', (data) => {
 
 socket.on('hints', (data) => { hints = data; });
 
-socket.on('choosePages', async ({ wikiid }) => {
+socket.on('choosePages', async ({ wikiid, turn }) => {
     const wiki = wikis.find(w => w.wikiid == wikiid);
     currentWiki = wiki;
     console.log(wiki);
@@ -80,7 +87,14 @@ socket.on('choosePages', async ({ wikiid }) => {
     pageSelector.hidden = false;
     document.getElementById('current_page').hidden = true;
     document.getElementById('pages_selected').hidden = true;
-    document.getElementById('scores_round').hidden = false;
+    console.debug('Turn', turn);
+    if (turn != 1) {
+        document.getElementById('scores_round').hidden = false;
+    }/* else {
+        document.querySelector('#current_page').hidden = false;
+        document.querySelector('#current_page').setAttribute('pagetitle', wiki.mainpage.replace(/ /g, '_'));
+        document.querySelector('#current_page').setAttribute('wikiid', wikiid);
+    }*/
     const form = pageSelector.querySelector('form');
     const startChoices = pageSelector.querySelector('[name=start_page]');
     const endChoices = pageSelector.querySelector('[name=end_page]');
@@ -97,6 +111,7 @@ socket.on('choosePages', async ({ wikiid }) => {
     document.querySelector('#clock').textContent = 0;
     clearInterval(timerID);
     //clock.stop();
+    window.scrollTo(0, 0);
 });
 
 socket.on('showPages', ({ start, end, wiki }) => {
@@ -104,13 +119,15 @@ socket.on('showPages', ({ start, end, wiki }) => {
     document.getElementById('pages_selecting').hidden = true;
     document.getElementById('scores_round').hidden = true;
     document.querySelector('#start_page').innerHTML = `<div><strong>${start.title}</strong></div>
-    <div>${start.snippet}</div>`;
+    <div>${start.summary}</div>`;
     document.querySelector('#end_page').innerHTML = `<div><strong>${end.title}</strong></div>
-    <div>${end.snippet}</div>`;
+    <div>${end.summary}</div>`;
     const pagesSelected = document.getElementById('pages_selected');
     pagesSelected.hidden = false;
     document.querySelectorAll('player-card').forEach(card => card.steps = 0);
 
+    document.querySelector('#current_historic').removeAttribute('steps');
+    document.querySelector('#historic').hidden = false;
     document.querySelector('#current_page').hidden = false;
     document.querySelector('#current_page').setAttribute('pagetitle', start.title.replace(/ /g, '_'));
     document.querySelector('#current_page').setAttribute('wikiid', wiki);
@@ -122,15 +139,18 @@ socket.on('startTimer', ({ time }) => startTimer(time));
 socket.on('reachEndPage', () => {
     console.log("Yeah!");
     document.getElementById('scores_round').hidden = false;
+    window.scrollTo(0, 0);
 });
 
 socket.on('endGame', async ({ stats }) => {
+    console.debug('The game is ended');
+    console.debug(stats);
+    document.getElementById('scores_round').hidden = false;
     let players = Object.keys(stats).filter((val) => val.length === 20);
     players = players.sort((id1, id2) => stats[id2].score - stats[id1].score);
 
     clearInterval(timerID);
     document.querySelector('#clock').textContent = 0;
-    document.querySelector('#game_zone').remove();
 
     players.forEach((playerID) => {
         const row = document.createElement('div');
@@ -153,7 +173,13 @@ socket.on('endGame', async ({ stats }) => {
         row.append(nameDiv, scoreDiv);
         document.querySelector('#statsDiv').append(row, document.createElement('hr'));
     });
-    //clock.stop();
-    document.querySelector('#game_ended').classList.remove('d-none');
-    document.querySelector('#game_ended').hidden = false;
+    
+    document.getElementById('closeRoom').classList.remove('d-none');
+    document.getElementById('closeRoom').hidden = false;
+    window.scrollTo(0, 0);
+    document.getElementById('closeRoom').addEventListener('click', () => {
+        document.querySelector('#game_zone').remove();
+        document.querySelector('#game_ended').classList.remove('d-none');
+        document.querySelector('#game_ended').hidden = false;
+    });
 });

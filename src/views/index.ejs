@@ -7,11 +7,23 @@
     <main>
         <div class="main-content">
             <section id="presentation">
-                <h1>MediaWiki Game</h1>
-                <p>In the WikiGame, you start from a page from a wiki, and you have to reach another page, using only interlinks present in the current page.</p>
+                <h1>
+                    WikiQuest<br>
+                    <small>Beyond the Links</small>
+                </h1>
+                <p>Embark on an epic <strong>WikiQuest</strong>, where the thrill of the WikiGame meets the vast realms of MediaWiki and Fandoms.</p>
+                <details>
+                    <summary>Principle</summary>
+                    <blockquote cite="https://en.wikipedia.org/wiki/Wikipedia:Wiki_Game">
+                        <p>The <strong>Wiki Game</strong>, also known as the <strong>Wikipedia race</strong>, <strong>Wikirace</strong>, <strong>Wikispeedia</strong>, <strong>WikiLadders</strong>, <strong>WikiClick</strong>, or <strong>WikiWhack</strong>, is a race between any number of participants, using wikilinks to travel from one Wikipedia page to another. The first person to reach the destination page, or the person that reaches the destination using the fewest links, wins the race.</p>
+                        <footer>—Wikipedia:Wiki Game, <cite>Wikipedia</cite></footer>
+                    </blockquote>
+                    <p>In WikiQuest, you start from a page from any wiki (based on MediaWiki), and you have to reach another page, using only interlinks present in the current page.</p>
+                </details>
             </section>
             <%- include('partials/landing', { roomID }) %>
             <%- include('partials/settings', { roomID }) %>
+            <%- include('partials/footer') %>
         </div>
     </main>
     <%- include('partials/gameZone') %>

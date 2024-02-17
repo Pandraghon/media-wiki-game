@@ -8,6 +8,7 @@ import Game from './controllers/Game.js';
 
 export default function init(server) {
     const io = new Server(server);
+    io.pgPool = server.pgPool;
 
     io.of("/").adapter.on("create-room", (room) => {
         console.log(`room ${room} was created`);
@@ -22,6 +23,7 @@ export default function init(server) {
         socket.on('newPrivateRoom', (player) => new Room(io, socket).createPrivateRoom(player));
         socket.on('joinRoom', async (data) => { await new Room(io, socket).joinRoom(data); });
         socket.on('settingsUpdate', (data) => new Room(io, socket).updateSettings(data));
+        socket.on('sendNewWiki', async (data) => { await new Room(io, socket).createWiki(data); });
         socket.on('startGame', async () => { await new Game(io, socket).startGame(); });
         socket.on('getPlayers', async () => { await new Game(io, socket).getPlayers(); });
         socket.on('navigation', (data) => new Game(io, socket).onNavigation(data));

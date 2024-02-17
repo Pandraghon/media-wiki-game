@@ -24,11 +24,21 @@ class PlayerScore extends HTMLElement {
 	}
 
 	renderSteps(steps) {
+		this.wikiid = this.getAttribute('wikiid');
+		const currentWiki = wikis.find(w => w.wikiid == this.wikiid);
+		const protocol = /^https?:/.test(currentWiki.server) ? '' : 'https:';
+
 		const listEl = this.querySelector('.player-steps-list');
 		listEl.innerHTML = '';
 		for (let i = 0, imax = steps.length ; i < imax ; i++) {
 			const stepEl = document.createElement('li');
-			stepEl.textContent = steps[i].replace(/_/g, ' ');
+			const stepA = document.createElement('a');
+			Object.assign(stepA, {
+				textContent: steps[i].replace(/_/g, ' '),
+				target: '_blank',
+				href: `${protocol}${currentWiki.server}${currentWiki.articlepath.replace('$1', steps[i])}`
+			});
+			stepEl.append(stepA);
 			listEl.append(stepEl);
 		}
 		this.querySelector('.player-steps-count').textContent = steps.length;

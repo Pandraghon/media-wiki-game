@@ -1,3 +1,12 @@
+<section id="players" hidden>
+    <h2>Players</h2>
+    <div id="playersDiv"></div>
+</section>
+<section id="historic" hidden>
+    <h2>Your steps</h2>
+    <p>You can jump back to a previous page, it will cost you another step.</p>
+    <player-historic id="current_historic" />
+</section>
 <section id="settings" hidden>
     <div>
         <div>
@@ -8,10 +17,24 @@
             </div>
         </div>
         <div>
+            <h2>Select a Wiki</h2>
+            <div>
+                <label for="wiki">Find an existing Wiki site</label>
+                <select class="input input-inline" id="wiki">
+                    <!-- filled with JS -->
+                </select>
+            </div>
+            <div>
+                <label for="newWiki">Or add a new one</label>
+                <input class="input input-inline" type="text" id="newWiki" name="newWiki" placeholder="https://en.wikipedia.org/wiki/Main_Page"/>
+                <button class="btn" id="sendNewWiki">Add</button>
+            </div>
+        </div>
+        <div>
             <h2>Settings</h2>
             <div>
                 <label for="rounds">Rounds</label>
-                <select id="rounds">
+                <select class="input input-inline" id="rounds">
                     <option value="1">1</option>
                     <option value="2" selected>2</option>
                     <option value="3">3</option>
@@ -26,7 +49,7 @@
             </div>
             <div>
                 <label for="time">Search time in seconds</label>
-                <select id="time">
+                <select class="input input-inline" id="time">
                     <option value="15">15</option>
                     <option value="30">30</option>
                     <option value="60" selected>60</option>
@@ -37,12 +60,6 @@
                     <option value="360">360</option>
                 </select>
             </div>
-            <div>
-                <label for="wiki">Select Wiki</label>
-                <select id="wiki">
-                    <!-- filled with JS -->
-                </select>
-            </div>
             <% if(!roomID) { %>
             <!-- Only for room owner -->
             <% } %>
@@ -50,8 +67,4 @@
         </div>
         
     </div>
-</section>
-<section id="players" hidden>
-    <h2>Players</h2>
-    <div id="playersDiv"></div>
 </section>

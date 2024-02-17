@@ -10,6 +10,7 @@ const my = {
 
 function updateSettings(e) {
     e.preventDefault();
+    console.log('update');
     socket.emit('settingsUpdate', {
         rounds: document.querySelector('#rounds').value,
         time: document.querySelector('#time').value,
@@ -37,6 +38,32 @@ socket.on('startGame', () => {
     gameZone.hidden = false;
 });
 
+socket.on('wikiAlreadyExists', (data) => {
+    console.log('Wiki already exists');
+    const { wikiid } = data;
+    const el = document.querySelector('#wiki');
+    el.value = wikiid;
+    el.dispatchEvent(new Event('change'));
+});
+
+socket.on('newWikiAdded', (data) => {
+    console.log('Wiki added');
+    const { wikiData } = data;
+    const el = document.querySelector('#wiki');
+
+    wikis.push(wikiData);
+    const wikiOption = document.createElement('option');
+    Object.assign(wikiOption, {
+        value: wikiData.wikiid,
+        textContent: `${wikiData.sitename} (${wikiData.lang})`
+    });
+    el.append(wikiOption);
+    if (!searchParams.has('id')) {
+        el.value = wikiData.wikiid;
+        el.dispatchEvent(new Event('change'));
+    }
+});
+
 if (playerName) {
     playerName.focus();
 }
@@ -46,6 +73,8 @@ if (searchParams.has('id')) {
     document.querySelector('#rounds').setAttribute('disabled', true);
     document.querySelector('#time').setAttribute('disabled', true);
     document.querySelector('#wiki').setAttribute('disabled', true);
+    document.querySelector('#newWiki').setAttribute('disabled', true);
+    document.querySelector('#sendNewWiki').setAttribute('disabled', true);
     document.querySelector('#startGame').setAttribute('disabled', true);
 } else {
     // room owner
@@ -82,6 +111,53 @@ copyBtn.addEventListener('click', (e) => {
     e.preventDefault();
     document.querySelector('#gameLink').select();
     document.execCommand('copy');
+});
+
+document.querySelector('#sendNewWiki').addEventListener('click', async () => {
+    const newWiki = document.getElementById('newWiki').value;
+    console.log(`Sending a new wiki for ${newWiki}`);
+    const newWikiURL = new URL(newWiki);
+    const wikiData = await fetch(`${newWikiURL.origin}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json&origin=*`, {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+    })
+    .then(res => res.json())
+    .then(res => {
+        const data = res.query.general;
+        return {
+            wikiid: data.wikiid,
+            sitename: data.sitename,
+            mainpage: data.mainpage,
+            server: data.server,
+            articlepath: data.articlepath,
+            scriptpath: data.scriptpath,
+            logo: data.logo,
+            favicon: data.favicon,
+            lang: data.lang
+        };
+    }).catch(async err => {
+        console.error(err);
+        return await fetch(`${newWikiURL.origin}/api.php?action=query&meta=siteinfo&formatversion=2&format=json&origin=*`, {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+        })
+        .then(res => res.json())
+        .then(res => {
+            const data = res.query.general;
+            return {
+                wikiid: data.wikiid,
+                sitename: data.sitename,
+                mainpage: data.mainpage,
+                server: data.server,
+                articlepath: data.articlepath,
+                scriptpath: data.scriptpath,
+                logo: data.logo,
+                favicon: data.favicon,
+                lang: data.lang
+            };
+        });
+    });
+    socket.emit('sendNewWiki', { wiki: wikiData });
 });
 
 document.querySelector('#startGame').addEventListener('click', async () => {

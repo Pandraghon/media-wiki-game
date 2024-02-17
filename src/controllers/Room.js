@@ -1,4 +1,5 @@
 import { randomId } from "./helpers.js";
+import fetch from 'node-fetch';
 
 export default class Room {
     constructor(io, socket) {
@@ -57,5 +58,22 @@ export default class Room {
         games[socket.roomID].probability = Number(data.probability);
         games[socket.roomID].wiki = data.wiki;
         socket.to(socket.roomID).emit('settingsUpdate', data);
+    }
+
+    async createWiki(data) {
+        console.log(`Creating a new wiki for ${data.wiki}`);
+        const { io, socket } = this;
+        const wikiData = data.wiki;
+        const existing = await io.pgPool.query('SELECT count(*) FROM game.wiki where wikiid = $1', [wikiData.wikiid]);
+        if (existing.rows[0].count > 0) {
+            console.log(`Already exists ${wikiData.wikiid}`);
+            return socket.emit('wikiAlreadyExists', { wikiid: wikiData.wikiid });
+        }
+
+        const created = await io.pgPool.query('INSERT INTO game.wiki (wikiid, sitename, mainpage, server, articlepath, scriptpath, logo, favicon, lang) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+            [wikiData.wikiid, wikiData.sitename, wikiData.mainpage, wikiData.server, wikiData.articlepath, wikiData.scriptpath, wikiData.logo, wikiData.favicon, wikiData.lang]);
+
+        console.log(`Created ${wikiData}`);
+        io.to(socket.roomID).emit('newWikiAdded', { wikiData });
     }
 };

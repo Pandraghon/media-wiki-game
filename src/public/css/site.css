@@ -21,6 +21,7 @@ main {
 	flex: 1;
 	padding: 1rem;
 	align-self: stretch;
+	text-align: center;
 }
 
 .main-content {
@@ -28,10 +29,23 @@ main {
 	top: 0;
 }
 
+main section {
+	max-width: 500px;
+	margin: auto;
+}
+
 aside {
 	flex: 4;
 	padding: 1rem;
 	border-left: 1px solid #a7d7f9;
+}
+
+.header {
+	position: sticky;
+	top: 0;
+	background: white;
+	z-index: 999;
+	text-align: center;
 }
 
 .flex-row {
@@ -43,6 +57,10 @@ aside {
 	flex: 1;
 }
 
+.d-none {
+	display: none !important;
+}
+
 .spacer {
 	margin: 1em;
 	text-align: center;
@@ -52,12 +70,47 @@ aside {
 	font-family: 'Linux Libertine','Georgia','Times',serif;
 }
 
+.choices__snippet {
+	font-style: italic;
+}
+
+.choices__snippet .searchmatch {
+	background-color: yellow;
+}
+
+.choices {
+	margin-bottom: 0;
+}
+
+page-choice {
+	margin-bottom: 24px;
+	text-align: initial;
+}
+
+#start_page, #end_page {
+	text-align: initial;
+}
+
 player-card {
 	display: block;
 }
 
 player-card.finished {
 	font-weight: bold;
+}
+
+player-historic {
+	text-align: initial;
+}
+
+blockquote {
+	border-left: 4px solid #eaecf0;
+	padding: 8px 16px;
+	color: #333;
+}
+
+blockquote > footer {
+	text-align: right;
 }
 
 .btn {

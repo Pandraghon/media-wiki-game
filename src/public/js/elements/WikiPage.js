@@ -32,14 +32,16 @@ class WikiPage extends HTMLElement {
 		this.pagetitle = this.getAttribute('pagetitle');
 		this.wikiid = this.getAttribute('wikiid');
 		
-		if (!this.pagetitle || !this.wikiid) return this.clear();;
+		if (!this.pagetitle || !this.wikiid) return this.clear();
 		const currentWiki = wikis.find(w => w.wikiid == this.wikiid);
+
+		const protocol = /^https?:/.test(currentWiki.server) ? '' : 'https:';
 
 		// add default style
 		const siteStyleEl = document.createElement('link');
 		Object.assign(siteStyleEl, {
 			rel: 'stylesheet',
-			href: `https:${currentWiki.server}${currentWiki.scriptpath}/load.php?${(new URLSearchParams({
+			href: `${protocol}${currentWiki.server}${currentWiki.scriptpath}/load.php?${(new URLSearchParams({
 				modules: 'site.styles|skins.vector.styles.legacy',
 				only: 'styles',
 				skin: 'vector',
@@ -55,30 +57,32 @@ class WikiPage extends HTMLElement {
 
 		// fetch Page text and styles based on modukes used
 		console.debug('Fetching content');
-		await fetch(`https:${currentWiki.server}${currentWiki.scriptpath}/api.php?${(new URLSearchParams({
+		await fetch(`${protocol}${currentWiki.server}${currentWiki.scriptpath}/api.php?${(new URLSearchParams({
 			action: 'parse',
 			format: 'json',
 			page: this.pagetitle,
 			prop: 'modules|text|jsconfigvars',
 			disableeditsection: 'true',
 			origin: '*',
+			redirects: true,
 		})).toString()}`)
 			.then(res => res.json())
 			.then(res => {
+				this.dispatchEvent(new CustomEvent('navigation', { detail: res.parse.title }));
 				const heading = document.createRange().createContextualFragment(`<h1 id="firstHeading" class="firstHeading">${res.parse.title}</h1>`)
 				const frag = document.createRange().createContextualFragment(res.parse.text['*']);
 				// deactivate external links
 				frag.querySelectorAll('a:is(.external, .extiw)').forEach(elem => elem.removeAttribute('href'));
 				// fix relative img src
 				frag.querySelectorAll('img[src^="/"]:not([src^="//"])').forEach(elem => {
-					elem.src = `https:${currentWiki.server}${elem.getAttribute('src')}`;
-					if (elem.hasAttribute('srcset')) elem.srcset = elem.getAttribute('srcset').split(', ').map(s => `https:${currentWiki.server}${s}`).join(', ');
+					elem.src = `${protocol}${currentWiki.server}${elem.getAttribute('src')}`;
+					if (elem.hasAttribute('srcset')) elem.srcset = elem.getAttribute('srcset').split(', ').map(s => `${protocol}${currentWiki.server}${s}`).join(', ');
 				});
 
 				const styleEl = document.createElement('link');
 				Object.assign(styleEl, {
 					rel: 'stylesheet',
-					href: `https:${currentWiki.server}${currentWiki.scriptpath}/load.php?${(new URLSearchParams({
+					href: `${protocol}${currentWiki.server}${currentWiki.scriptpath}/load.php?${(new URLSearchParams({
 						modules: res.parse.modulestyles.join('|'),
 						only: 'styles',
 						skin: 'vector',
@@ -90,19 +94,21 @@ class WikiPage extends HTMLElement {
 				this.shadowRoot.prepend(siteStyleEl, pageStyleEl);
 				this.shadowRoot.append(styleEl, heading, frag);
 
+				window.scrollTo(0, 0);
+
 				this.shadowRoot.querySelectorAll('a[href^="#"]').forEach(elem => elem.addEventListener('click', (e) => {
 					e.preventDefault();
-					this.shadowRoot.getElementById(elem.hash.slice(1)).scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+					this.shadowRoot.getElementById(decodeURIComponent(elem.hash.slice(1))).scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
 				}));
 
 				this.shadowRoot.querySelectorAll('a[href^="/"]').forEach(elem => elem.addEventListener('click', (e) => {
 					e.preventDefault();
 					let pagetitle = elem.pathname.split('/');
-					pagetitle = decodeURIComponent(pagetitle[pagetitle.length - 1]);
-					this.dispatchEvent(new CustomEvent('navigation', { detail: pagetitle }));
+					pagetitle = decodeURIComponent(pagetitle[pagetitle.length - 1]).replace(/_/g, ' ');
 					this.setAttribute('pagetitle', pagetitle);
 				}));
-			});
+			})
+			.catch(console.error);
 	}
   
   }
