@@ -16,6 +16,10 @@ h1 {
 	font-variant: small-caps;
 }
 
+h2 {
+	margin-block-start: 1.5em;
+}
+
 main {
 	background-color: #f6f6f6;
 	flex: 1;
@@ -91,12 +95,33 @@ page-choice {
 	text-align: initial;
 }
 
+#playersDiv {
+	display: flex;
+	justify-content: space-around;
+}
+
 player-card {
 	display: block;
+	max-width: 128px;
 }
 
 player-card.finished {
 	font-weight: bold;
+}
+
+player-card .player-name {
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;  
+	overflow: hidden;
+	overflow-wrap: break-word;
+}
+
+player-score .player-name {
+	display: inline-block;
+	max-width: 64ch;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 player-historic {
