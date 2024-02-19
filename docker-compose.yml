@@ -11,6 +11,7 @@ services:
     networks:
       - default
     image: postgres:13
+    restart: unless-stopped
     ports:
       - 5434:5432
     environment:
@@ -23,6 +24,7 @@ services:
 
   node:
     image: node
+    restart: unless-stopped
     networks:
       - proxy
       - default
