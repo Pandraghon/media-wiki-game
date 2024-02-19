@@ -25,6 +25,16 @@ export default class Room {
         socket.emit('newPrivateRoom', { gameID: id });
     }
 
+    async restartGame() {
+        const { io, socket } = this;
+        Array.from(await io.in(socket.roomID).allSockets()).forEach(playerID => {
+            if (playerID in games[socket.roomID]) Object.assign(games[socket.roomID][playerID], {
+                score: 0,
+            });
+        });
+        io.to(socket.roomID).emit('restartGame');
+    }
+
     async joinRoom(data) {
         const { io, socket } = this;
         const roomID = data.id;

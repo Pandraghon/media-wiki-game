@@ -10,7 +10,9 @@ function createPlayerCard(players, wikiid) {
         playerCard.id = `player-${player.id}`;
         playerCard.setAttribute('name', player.name);
         document.querySelector('.players').append(playerCard);*/
-
+        if (document.getElementById(`player-score-${player.id}`)) {
+            return document.getElementById(`player-score-${player.id}`).setAttribute('wikiid', wikiid);
+        }
         const playerScore = new PlayerScore();
         playerScore.id = `player-score-${player.id}`;
         playerScore.setAttribute('name', player.name);
@@ -143,7 +145,7 @@ socket.on('reachEndPage', () => {
 });
 
 socket.on('endGame', async ({ stats }) => {
-    console.debug('The game is ended');
+    console.debug('The game has ended');
     console.debug(stats);
     document.getElementById('scores_round').hidden = false;
     let players = Object.keys(stats).filter((val) => val.length === 20);
@@ -178,8 +180,12 @@ socket.on('endGame', async ({ stats }) => {
     document.getElementById('closeRoom').hidden = false;
     window.scrollTo(0, 0);
     document.getElementById('closeRoom').addEventListener('click', () => {
-        document.querySelector('#game_zone').remove();
+        document.querySelector('#game_zone').hidden = true;
         document.querySelector('#game_ended').classList.remove('d-none');
         document.querySelector('#game_ended').hidden = false;
+
+        document.getElementById('restartGame').addEventListener('click', () => {
+            socket.emit('restartGame');
+        });
     });
 });

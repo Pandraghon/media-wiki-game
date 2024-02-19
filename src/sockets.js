@@ -25,6 +25,7 @@ export default function init(server) {
         socket.on('settingsUpdate', (data) => new Room(io, socket).updateSettings(data));
         socket.on('sendNewWiki', async (data) => { await new Room(io, socket).createWiki(data); });
         socket.on('startGame', async () => { await new Game(io, socket).startGame(); });
+        socket.on('restartGame', async () => { await new Room(io, socket).restartGame(); });
         socket.on('getPlayers', async () => { await new Game(io, socket).getPlayers(); });
         socket.on('navigation', (data) => new Game(io, socket).onNavigation(data));
         socket.on('disconnect', () => new Disconnect(io, socket).onDisconnect());

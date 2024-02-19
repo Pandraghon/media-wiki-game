@@ -181,3 +181,17 @@ window.onload = () => {
         wikiSelect.append(wikiOption);
     }
 };
+
+socket.on('restartGame', () => {
+    document.getElementById('scores_round').hidden = true;
+    document.querySelector('#game_zone').hidden = true;
+    document.querySelector('#game_ended').hidden = true;
+    document.getElementById('closeRoom').hidden = true;
+    document.querySelector('#historic').hidden = true;
+    document.querySelector('#current_page').hidden = true;
+    document.getElementById('page_selector').hidden = true;
+    document.getElementById('pages_selecting').hidden = true;
+    document.getElementById('pages_selected').hidden = true;
+
+    document.querySelector('#settings').hidden = false;
+});

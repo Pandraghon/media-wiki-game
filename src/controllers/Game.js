@@ -44,7 +44,6 @@ export default class Game {
             }
         }
         io.to(socket.roomID).emit('endGame', { stats: games[socket.roomID] });
-        delete games[socket.roomID];
     }
 
     async giveTurnTo(players, i, turn) {
